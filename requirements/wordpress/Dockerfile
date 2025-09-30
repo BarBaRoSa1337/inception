@@ -13,4 +13,10 @@ RUN curl -o /tmp/wordpress.tar.gz https://wordpress.org/latest.tar.gz \
     && tar -xzf /tmp/wordpress.tar.gz -C /var/www/ \
     && rm /tmp/wordpress.tar.gz
 
-COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
+RUN sed -i 's|listen = /run/php/php7.4-fpm.sock|listen = wordpress:9000|g' \
+    /etc/php/7.4/fpm/pool.d/www.conf
+
+COPY ./config/setup.sh /tmp/setup.sh
+RUN chmod +x /tmp/setup.sh
+
+CMD ["/tmp/setup.sh"]

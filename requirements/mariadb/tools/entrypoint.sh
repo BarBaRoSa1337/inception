@@ -7,7 +7,7 @@ if [ ! -d "/var/lib/mysql/mysql" ]; then
 fi
 
 service mariadb start
-sleep 3
+sleep 4
 
 mysql -e "CREATE DATABASE IF NOT EXISTS \`${SQL_DATABASE}\`;"
 # mysql -e "CREATE USER IF NOT EXISTS \`${SQL_USER}\`@'localhost' IDENTIFIED BY '${SQL_PASSWORD}';"
