@@ -1,0 +1,19 @@
+ Database setup
+SQL_DATABASE=wordpress
+SQL_USER=wpuser
+SQL_PASSWORD=wppass
+SQL_ROOT_PASSWORD=rootpass
+
+# WordPress uses the same values
+WP_NAME=${SQL_DATABASE}
+WP_USER=${SQL_USER}
+WP_PASSWORD=${SQL_PASSWORD}
+WP_HOST=mariadb
+WP_URL=https://barbarosa.42.fr
+WP_TITLE=Inception
+WP_EMAIL=barbarosa@student.1337.ma
+
+# WordPress admin (only for WP install, not DB)
+WP_ADMIN_USER=achakour
+WP_ADMIN_PASSWORD=passwd
+WP_ADMIN_EMAIL=test@gmail.com

@@ -1,21 +1,26 @@
 #!/bin/bash
-
 set -e
 
+# Initialize MariaDB if database directory is empty
 if [ ! -d "/var/lib/mysql/mysql" ]; then
+    echo "[Entrypoint] Initializing database..."
     mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql
 fi
 
+# Start MariaDB temporarily
 service mariadb start
 sleep 4
 
-mysql -e "CREATE DATABASE IF NOT EXISTS \`${SQL_DATABASE}\`;"
-# mysql -e "CREATE USER IF NOT EXISTS \`${SQL_USER}\`@'localhost' IDENTIFIED BY '${SQL_PASSWORD}';"
-mysql -e "CREATE USER IF NOT EXISTS \`${SQL_USER}\`@'%' IDENTIFIED BY '${SQL_PASSWORD}';"
-# mysql -e "GRANT ALL PRIVILEGES ON \`${SQL_DATABASE}\`.* TO \`${SQL_USER}\`@'localhost';"
-mysql -e "GRANT ALL PRIVILEGES ON \`${SQL_DATABASE}\`.* TO \`${SQL_USER}\`@'%';"
-mysql -e "FLUSH PRIVILEGES;"
+# Run SQL setup (explicit root login, safer DB/user escaping)
+mysql -uroot -p${SQL_ROOT_PASSWORD} <<-EOSQL
+    CREATE DATABASE IF NOT EXISTS \`${SQL_DATABASE}\`;
+    CREATE USER IF NOT EXISTS '${SQL_USER}'@'%' IDENTIFIED BY '${SQL_PASSWORD}';
+    GRANT ALL PRIVILEGES ON \`${SQL_DATABASE}\`.* TO '${SQL_USER}'@'%';
+    FLUSH PRIVILEGES;
+EOSQL
 
+# Stop temporary MariaDB
 service mariadb stop
 
-exec mysqld
+# Start MariaDB in foreground
+exec mysqld_safe
