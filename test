@@ -1,14 +1,23 @@
-SQL_DATABASE=wordpress
-SQL_USER=wpuser
-SQL_PASSWORD=wppass
-SQL_ROOT_PASSWORD=passwrd
+server {
+    listen 443 ssl;
 
-WP_NAME=wordpress
-WP_USER=wpuser
-WP_PASSWORD=wppass
-WP_HOST=mariadb
-WP_URL=https://barbarosa.42.fr
-WP_TITLE=Inception
-WP_ADMIN_USER=achakour
-WP_ADMIN_PASSWORD=passwd
-WP_ADMIN_EMAIL=test@gmail.com
+    root /var/www/wordpress;
+
+    index  index.php index.html;
+
+    server_name csaidi.42.fr;
+
+	ssl_certificate /etc/ssl/certs/csaidi.42.fr.cert;
+    ssl_certificate_key /etc/ssl/certs/csaidi.42.fr.key;
+ 
+    ssl_protocols TLSv1.3;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass wordpress:9000;
+    }
+}
