@@ -1,22 +1,17 @@
 #!/bin/bash
-set -e
 
-echo "[Entrypoint] Starting MariaDB initialization..."
+service mariadb start
 
-mkdir -p /run/mysqld
-chown -R mysql:mysql /run/mysqld /var/lib/mysql
+until mysqladmin ping >/dev/null 2>&1; do
+    echo "Waiting for MariaDB to start..."
+    sleep 1
+done
 
-if [ ! -d "/var/lib/mysql/mysql" ]; then
-    echo "[Entrypoint] Initializing database files..."
-    mysql_install_db --user=mysql --basedir=/usr --datadir=/var/lib/mysql > /dev/null
+mysql -e "CREATE DATABASE IF NOT EXISTS \`${SQL_DATABASE}\`;"
+mysql -e "CREATE USER IF NOT EXISTS \`${SQL_USER}\`@'%' IDENTIFIED BY '${SQL_PASS}';"
+mysql -e "GRANT ALL PRIVILEGES ON \`${SQL_DATABASE}\`.* TO \`${SQL_USER}\`@'%' IDENTIFIED BY '${SQL_PASS}';"
+mysql -e "FLUSH PRIVILEGES;"
 
-    mysqld --user=mysql --skip-networking --bootstrap <<-EOSQL
-        CREATE DATABASE IF NOT EXISTS ${SQL_DATABASE};
-        CREATE USER IF NOT EXISTS '${SQL_USER}'@'%' IDENTIFIED BY '${SQL_PASSWORD}';
-        GRANT ALL PRIVILEGES ON ${SQL_DATABASE}.* TO '${SQL_USER}'@'%';
-        FLUSH PRIVILEGES;
-EOSQL
-fi
+service mariadb stop
 
-echo "[MariaDB] Starting main server..."
 exec mysqld_safe
