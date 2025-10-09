@@ -1,13 +1,19 @@
-server {
-    listen 443 ssl;
+# MariaDB Environment Variables
+SQL_DATABASE=wordpress
+SQL_USER=wpuser
+SQL_PASS=wppass
+SQL_ROOT_PASS=root
 
-    ssl_certificate ${SSL_CERTIFICATE};
-    ssl_certificate_key ${SSL_CERTIFICATE_KEY};
-    root /var/www/html/;
-    index index.php;
+# Wordpress Database
+WP_NAME=wordpress
+WP_USER=wpuser
+WP_PASS=wppass
+WP_HOST=mariadb:3306
+WP_URL=https://barbarosa.42.fr
+WP_TITLE=Inception
+WP_EMAIL=achakour@student.1337.ma
 
-     location ~ \.php$ {
-        include /etc/nginx/snippets/fastcgi-php.conf;
-        fastcgi_pass wordpress:9000;
-    }
-}
+# Wordpress Admin Info
+WP_ADMIN_USER=achakour
+WP_ADMIN_PASSWORD=passwd
+WP_ADMIN_MAIL=test@gmail.com
