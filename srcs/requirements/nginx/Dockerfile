@@ -10,7 +10,3 @@ RUN  openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 COPY ./conf/default.conf /etc/nginx/conf.d/default.conf
 
 CMD ["nginx", "-g", "daemon off;"]
-
-# test for 
-# docker exec -it nginx ping wordpress
-# docker exec -it wordpress ss -tlnp | grep 9000
